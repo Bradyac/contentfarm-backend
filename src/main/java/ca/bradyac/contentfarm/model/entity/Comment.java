@@ -1,19 +1,18 @@
 package ca.bradyac.contentfarm.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-
 import java.time.Instant;
+import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Comment {
@@ -25,11 +24,26 @@ public class Comment {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id", referencedColumnName = "id")
+    @ToString.Exclude
     private Post post;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ToString.Exclude
     private User user;
 
     private Instant created;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comment c = (Comment) o;
+        return id == c.id && Objects.equals(text, c.text) && Objects.equals(post, c.post) && Objects.equals(user, c.user) && Objects.equals(created, c.created);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, text, post, user, created);
+    }
 }
